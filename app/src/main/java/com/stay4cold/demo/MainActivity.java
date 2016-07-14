@@ -8,13 +8,31 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import com.stay4cold.okrecyclerview.MoreState;
+import com.stay4cold.okrecyclerview.OkRecyclerView;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private RecyclerView mRv;
+
+    private Ad adapter;
+
+    private OkRecyclerView agent;
+
+    private ArrayList<String> data = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +40,49 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        for (int i = 0; i < 50;i++) {
+            data.add("Demo"+i);
+        }
+        mRv = (RecyclerView)findViewById(R.id.rv);
+
+        mRv.setLayoutManager(new LinearLayoutManager(this));
+
+        mRv.setAdapter(adapter = new Ad());
+
+
+
+        agent = new OkRecyclerView(mRv);
+
+        agent.setOnLoadMoreListener(new OkRecyclerView.OnLoadMoreListener() {
+            @Override
+            public void onLoadMore() {
+
+                mRv.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        for (int i = 0; i < 50;i++) {
+                            data.add("Demo"+data.size());
+                            adapter.notifyDataSetChanged();
+                        }
+                        agent.setMoreState(MoreState.Error);
+
+                        agent.getFooterDelegate().getMoreStateView(MoreState.Error).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                agent.setMoreState(MoreState.Loading);
+                            }
+                        });
+
+                        if (data.size() > 150) {
+                            agent.setMoreState(MoreState.TheEnd);
+                        }
+                    }
+                }, 2000);
+            }
+        });
+
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -97,5 +158,33 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    class Ad extends RecyclerView.Adapter<Ad.Holder> {
+
+
+        @Override
+        public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
+            return new Holder(LayoutInflater.from(MainActivity.this).inflate(R.layout.example, parent, false));
+        }
+
+        @Override
+        public void onBindViewHolder(Holder holder, int position) {
+            holder.tv.setText(data.get(position));
+        }
+
+        @Override
+        public int getItemCount() {
+
+            return data.size();
+        }
+
+        class Holder extends RecyclerView.ViewHolder {
+            public TextView tv;
+            public Holder(View view) {
+                super(view);
+                tv = (TextView) view.findViewById(R.id.tv);
+            }
+        }
     }
 }

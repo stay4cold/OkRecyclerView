@@ -1,2 +1,2 @@
-# SRecyclerView
-实现加载更多的recyclerview
+# OkRecyclerView
+实现添加Header和加载更多等的RecyclerView
