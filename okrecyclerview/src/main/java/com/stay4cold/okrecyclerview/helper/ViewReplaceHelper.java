@@ -1,4 +1,4 @@
-package com.stay4cold.okrecyclerview;
+package com.stay4cold.okrecyclerview.helper;
 
 import android.support.annotation.NonNull;
 import android.view.View;

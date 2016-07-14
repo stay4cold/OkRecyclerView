@@ -1,10 +1,14 @@
-package com.stay4cold.okrecyclerview;
+package com.stay4cold.okrecyclerview.delegate;
 
 import android.content.Context;
 import android.support.annotation.LayoutRes;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.stay4cold.okrecyclerview.R;
+import com.stay4cold.okrecyclerview.helper.ViewReplaceHelper;
+import com.stay4cold.okrecyclerview.state.LoadingState;
 
 /**
  * Author:  wangchenghao
@@ -30,11 +34,12 @@ public class DefaultLoadingDelegate implements LoadingDelegate {
 
         mHelper = new ViewReplaceHelper(targetView);
 
-        ViewGroup parent = (ViewGroup) targetView.getParent();
-
-        mEmptyView = (ViewGroup) LayoutInflater.from(mContext).inflate(R.layout.sre_empty_container, null);
-        mLoadingView = (ViewGroup) LayoutInflater.from(mContext).inflate(R.layout.sre_loading_container, null);
-        mErrorView = (ViewGroup) LayoutInflater.from(mContext).inflate(R.layout.sre_error_container, null);
+        mEmptyView = (ViewGroup) LayoutInflater.from(mContext)
+                .inflate(R.layout.sre_empty_container, null);
+        mLoadingView = (ViewGroup) LayoutInflater.from(mContext)
+                .inflate(R.layout.sre_loading_container, null);
+        mErrorView = (ViewGroup) LayoutInflater.from(mContext)
+                .inflate(R.layout.sre_error_container, null);
     }
 
     public void setLoadingView(LoadingState state, View view) {

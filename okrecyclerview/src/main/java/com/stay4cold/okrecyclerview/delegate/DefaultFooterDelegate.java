@@ -1,10 +1,14 @@
-package com.stay4cold.okrecyclerview;
+package com.stay4cold.okrecyclerview.delegate;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+
+import com.stay4cold.okrecyclerview.OkRecyclerView;
+import com.stay4cold.okrecyclerview.R;
+import com.stay4cold.okrecyclerview.state.MoreState;
 
 /**
  * Author:  wangchenghao
@@ -63,16 +67,29 @@ public class DefaultFooterDelegate implements FooterDelegate {
         mEndView = moreEndView;
     }
 
+    /**
+     * 获取每种state中的View
+     * <p/>
+     * 注意：如果需要添加自定义的view，请先set自定义的View，然后才可调用
+     * 此方法进行获取view，否则容易造成NullPointerException或者获取的是
+     * 默认的view
+     *
+     * @param state
+     * @return
+     */
     @Override
     public View getMoreStateView(MoreState state) {
         switch (state) {
             case Normal:
                 return mContainer;
             case TheEnd:
+                initEndView();
                 return mEndView;
             case Loading:
+                initLoadingView();
                 return mLoadingView;
             case Error:
+                initErrorView();
                 return mErrorView;
         }
         return null;
@@ -129,22 +146,13 @@ public class DefaultFooterDelegate implements FooterDelegate {
     }
 
     private void showNormal() {
-        initContainer();
-
         for (int index = 0; index < mContainer.getChildCount(); index++) {
             mContainer.getChildAt(index).setVisibility(View.INVISIBLE);
         }
     }
 
     private void showError() {
-        initContainer();
-        if (mErrorView == null) {
-            mErrorView = LayoutInflater.from(mContext).inflate(R.layout.footer_error, null);
-        }
-
-        if (mErrorView.getParent() == null) {
-            mContainer.addView(mErrorView);
-        }
+        initErrorView();
 
         for (int index = 0; index < mContainer.getChildCount(); index++) {
             if (mContainer.getChildAt(index) == mErrorView) {
@@ -155,15 +163,18 @@ public class DefaultFooterDelegate implements FooterDelegate {
         }
     }
 
-    private void showEnd() {
-        initContainer();
-        if (mEndView == null) {
-            mEndView = LayoutInflater.from(mContext).inflate(R.layout.footer_end, null);
+    private void initErrorView() {
+        if (mErrorView == null) {
+            mErrorView = LayoutInflater.from(mContext).inflate(R.layout.footer_error, null);
         }
 
-        if (mEndView.getParent() == null) {
-            mContainer.addView(mEndView);
+        if (mErrorView.getParent() == null) {
+            mContainer.addView(mErrorView);
         }
+    }
+
+    private void showEnd() {
+        initEndView();
 
         for (int index = 0; index < mContainer.getChildCount(); index++) {
             if (mContainer.getChildAt(index) == mEndView) {
@@ -174,18 +185,18 @@ public class DefaultFooterDelegate implements FooterDelegate {
         }
     }
 
+    private void initEndView() {
+        if (mEndView == null) {
+            mEndView = LayoutInflater.from(mContext).inflate(R.layout.footer_end, null);
+        }
+
+        if (mEndView.getParent() == null) {
+            mContainer.addView(mEndView);
+        }
+    }
+
     private void showLoading() {
-        initContainer();
-
-        if (mLoadingView == null) {
-            mLoadingView = LayoutInflater.from(mContext)
-                    .inflate(R.layout.footer_more, null);
-        }
-
-        if (mLoadingView.getParent() == null) {
-            mContainer.addView(mLoadingView);
-        }
-
+        initLoadingView();
 
         for (int index = 0; index < mContainer.getChildCount(); index++) {
             if (mContainer.getChildAt(index) == mLoadingView) {
@@ -196,6 +207,17 @@ public class DefaultFooterDelegate implements FooterDelegate {
         }
         if (mListener != null) {
             mListener.onLoadMore();
+        }
+    }
+
+    private void initLoadingView() {
+        if (mLoadingView == null) {
+            mLoadingView = LayoutInflater.from(mContext)
+                    .inflate(R.layout.footer_more, null);
+        }
+
+        if (mLoadingView.getParent() == null) {
+            mContainer.addView(mLoadingView);
         }
     }
 }

@@ -1,11 +1,11 @@
-package com.stay4cold.okrecyclerview;
+package com.stay4cold.okrecyclerview.state;
 
 /**
  * Author:  wangchenghao
  * Email:   wangchenghao123@126.com
  * Date:    16/7/12
  * Description:
- *      标示底部"加载更多"的状态
+ * 标示底部"加载更多"等的状态
  */
 public enum MoreState {
     //正常状态(即无状态),List还未滑动到需要加载的位置

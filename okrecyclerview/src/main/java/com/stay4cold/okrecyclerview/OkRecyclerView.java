@@ -3,6 +3,14 @@ package com.stay4cold.okrecyclerview;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 
+import com.stay4cold.okrecyclerview.delegate.DefaultFooterDelegate;
+import com.stay4cold.okrecyclerview.delegate.DefaultLoadingDelegate;
+import com.stay4cold.okrecyclerview.delegate.FooterDelegate;
+import com.stay4cold.okrecyclerview.delegate.HeaderDelegate;
+import com.stay4cold.okrecyclerview.delegate.LoadingDelegate;
+import com.stay4cold.okrecyclerview.state.LoadingState;
+import com.stay4cold.okrecyclerview.state.MoreState;
+
 /**
  * Author:  wangchenghao
  * Email:   wangchenghao123@126.com
@@ -19,9 +27,7 @@ public class OkRecyclerView {
 
     private RecyclerView.Adapter mOriginalAdapter;
 
-    private RvAdapterAgent mAdapterAgent;
-
-    private MoreState mMoreState = MoreState.Normal;
+    private AdapterAgent mAdapterAgent;
 
     private LoadingDelegate mLoadDelegate;
 
@@ -35,7 +41,7 @@ public class OkRecyclerView {
 
         this.mOriginalRv = recyclerView;
 
-        mAdapterAgent = new RvAdapterAgent(mOriginalRv);
+        mAdapterAgent = new AdapterAgent(mOriginalRv);
 
         mOriginalAdapter = mOriginalRv.getAdapter();
 
@@ -66,6 +72,12 @@ public class OkRecyclerView {
         return getLoadDelegate().getLoadingState();
     }
 
+    public void setHeaderDelegate(HeaderDelegate header) {
+        if (header != null) {
+            mAdapterAgent.addHeader(header);
+        }
+    }
+
     public void setFooterDelegate(FooterDelegate footerDelegate) {
         mFooterDelegate = footerDelegate;
     }
@@ -94,7 +106,7 @@ public class OkRecyclerView {
         getFooterDelegate().setOnLoadMoreListener(listener);
     }
 
-    public RvAdapterAgent getAdapterAgent() {
+    public AdapterAgent getAdapterAgent() {
         return mAdapterAgent;
     }
 
@@ -105,8 +117,9 @@ public class OkRecyclerView {
 
     public static class SDataObserver extends RecyclerView.AdapterDataObserver {
 
-        private RvAdapterAgent agent;
-        public SDataObserver(RvAdapterAgent adapter) {
+        private AdapterAgent agent;
+
+        public SDataObserver(AdapterAgent adapter) {
             agent = adapter;
         }
 

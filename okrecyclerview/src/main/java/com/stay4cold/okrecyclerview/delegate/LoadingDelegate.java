@@ -1,7 +1,9 @@
-package com.stay4cold.okrecyclerview;
+package com.stay4cold.okrecyclerview.delegate;
 
 import android.support.annotation.LayoutRes;
 import android.view.View;
+
+import com.stay4cold.okrecyclerview.state.LoadingState;
 
 /**
  * Author:  wangchenghao

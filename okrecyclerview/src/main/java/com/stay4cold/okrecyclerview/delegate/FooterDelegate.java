@@ -1,7 +1,10 @@
-package com.stay4cold.okrecyclerview;
+package com.stay4cold.okrecyclerview.delegate;
 
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.stay4cold.okrecyclerview.OkRecyclerView;
+import com.stay4cold.okrecyclerview.state.MoreState;
 
 /**
  * Author:  wangchenghao
@@ -9,7 +12,7 @@ import android.view.ViewGroup;
  * Date:    16/7/13
  * Description:
  */
-public interface FooterDelegate extends HeaderDelegate{
+public interface FooterDelegate extends HeaderDelegate {
 
     void setMoreContainer(ViewGroup viewGroup);
 

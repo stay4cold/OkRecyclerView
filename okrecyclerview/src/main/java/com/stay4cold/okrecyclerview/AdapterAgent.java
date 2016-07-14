@@ -1,8 +1,13 @@
 package com.stay4cold.okrecyclerview;
 
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.stay4cold.okrecyclerview.delegate.FooterDelegate;
+import com.stay4cold.okrecyclerview.delegate.HeaderDelegate;
 
 import java.util.ArrayList;
 
@@ -11,21 +16,33 @@ import java.util.ArrayList;
  * Email:   wangchenghao123@126.com
  * Date:    16/7/13
  * Description:
+ * 将原始的Adapter进行包装生成的新Adapter
  */
-public class RvAdapterAgent extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class AdapterAgent extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private static final String TAG = RvAdapterAgent.class.getSimpleName();
+    private static final String TAG = AdapterAgent.class.getSimpleName();
 
     private ArrayList<HeaderDelegate> mHeaders = new ArrayList<>();
     private ArrayList<FooterDelegate> mFooters = new ArrayList<>();
 
+    //原始的Recyclerview
     private RecyclerView mOriginalRv;
 
+    //原始RecyclerView中的Adapter
     private RecyclerView.Adapter mOriginalAdapter;
 
-    public RvAdapterAgent(RecyclerView recyclerView) {
+    //代理原始GridLayoutManager中的Spansizelookup，其中处理Header和Footer的item
+    private GridSpansizeLookup mSpansizeLookup;
+
+    public AdapterAgent(RecyclerView recyclerView) {
         mOriginalRv = recyclerView;
-        mOriginalAdapter= mOriginalRv.getAdapter();
+        mOriginalAdapter = mOriginalRv.getAdapter();
+
+        if (mOriginalRv.getLayoutManager() instanceof GridLayoutManager) {
+            GridLayoutManager lm = (GridLayoutManager) mOriginalRv.getLayoutManager();
+            mSpansizeLookup = new GridSpansizeLookup(lm);
+            lm.setSpanSizeLookup(mSpansizeLookup);
+        }
     }
 
     @Override
@@ -68,7 +85,7 @@ public class RvAdapterAgent extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
 
         if (mFooters.size() != 0) {
-            int index = position - mHeaders.size() - mOriginalAdapter.getItemCount();
+            int index = position - mHeaders.size() - getRealItemCount();
             if (index >= 0) {
                 return mFooters.get(index).hashCode();
             }
@@ -89,7 +106,7 @@ public class RvAdapterAgent extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private View getHeaderByType(ViewGroup parent, int viewType) {
         for (HeaderDelegate header : mHeaders) {
             if (header.hashCode() == viewType) {
-                return header.onCreateView(parent);
+                return convertLayoutParams(header.onCreateView(parent));
             }
         }
         return null;
@@ -98,13 +115,38 @@ public class RvAdapterAgent extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private View getFooterByType(ViewGroup parent, int viewType) {
         for (FooterDelegate footer : mFooters) {
             if (footer.hashCode() == viewType) {
-                return footer.onCreateView(parent);
+                return convertLayoutParams(footer.onCreateView(parent));
             }
         }
         return null;
     }
 
-    //--------->Header And Footer function start<------------//
+    /**
+     * 处理StaggeredGridLayoutManager中Header和Footer的Span，使其可以占满整个Item
+     *
+     * @param view
+     * @return
+     */
+    private View convertLayoutParams(View view) {
+        if (view == null) {
+            return null;
+        }
+
+        final RecyclerView.LayoutManager lm = mOriginalRv.getLayoutManager();
+
+        if (lm instanceof StaggeredGridLayoutManager) {
+            StaggeredGridLayoutManager.LayoutParams slp;
+            if (view.getLayoutParams() != null) {
+                slp = new StaggeredGridLayoutManager.LayoutParams(view.getLayoutParams());
+            } else {
+                slp = new StaggeredGridLayoutManager.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            }
+            slp.setFullSpan(true);
+            view.setLayoutParams(slp);
+        }
+
+        return view;
+    }
 
     public void addHeader(HeaderDelegate header) {
         if (header == null) {
@@ -173,6 +215,35 @@ public class RvAdapterAgent extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public static class FooterHolder extends RecyclerView.ViewHolder {
         public FooterHolder(View itemView) {
             super(itemView);
+        }
+    }
+
+    public class GridSpansizeLookup extends GridLayoutManager.SpanSizeLookup {
+
+        private GridLayoutManager.SpanSizeLookup lookup;
+        private int count;
+
+        public GridSpansizeLookup(GridLayoutManager lm) {
+            lookup = lm.getSpanSizeLookup();
+            count = lm.getSpanCount();
+        }
+
+        /**
+         * 返回处理后的spanSize，注意：新的adapter中position位置已经更改，所以应该为 position - mHeaders.size()
+         *
+         * @param position
+         * @return
+         */
+        @Override
+        public int getSpanSize(int position) {
+            if (mHeaders.size() != 0 && position < mHeaders.size()) {
+                return count;
+            }
+
+            if (mFooters.size() != 0 && (position - mHeaders.size() - getRealItemCount()) >= 0) {
+                return count;
+            }
+            return lookup.getSpanSize(position - mHeaders.size());
         }
     }
 }

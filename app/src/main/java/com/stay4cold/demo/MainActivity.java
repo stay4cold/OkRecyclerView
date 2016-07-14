@@ -8,7 +8,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -18,8 +18,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.stay4cold.okrecyclerview.MoreState;
 import com.stay4cold.okrecyclerview.OkRecyclerView;
+import com.stay4cold.okrecyclerview.delegate.HeaderDelegate;
+import com.stay4cold.okrecyclerview.state.MoreState;
 
 import java.util.ArrayList;
 
@@ -41,18 +42,28 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        for (int i = 0; i < 50;i++) {
+        for (int i = 0; i < 10;i++) {
             data.add("Demo"+i);
         }
         mRv = (RecyclerView)findViewById(R.id.rv);
 
-        mRv.setLayoutManager(new LinearLayoutManager(this));
+        mRv.setLayoutManager(new GridLayoutManager(this, 2));
 
         mRv.setAdapter(adapter = new Ad());
 
-
-
         agent = new OkRecyclerView(mRv);
+
+        agent.setHeaderDelegate(new HeaderDelegate() {
+            @Override
+            public View onCreateView(ViewGroup parent) {
+                return LayoutInflater.from(parent.getContext()).inflate(R.layout.example1, null);
+            }
+
+            @Override
+            public void onBindView(View view) {
+
+            }
+        });
 
         agent.setOnLoadMoreListener(new OkRecyclerView.OnLoadMoreListener() {
             @Override
@@ -65,7 +76,7 @@ public class MainActivity extends AppCompatActivity
                             data.add("Demo"+data.size());
                             adapter.notifyDataSetChanged();
                         }
-                        agent.setMoreState(MoreState.Error);
+                        agent.setMoreState(MoreState.Normal);
 
                         agent.getFooterDelegate().getMoreStateView(MoreState.Error).setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -75,7 +86,7 @@ public class MainActivity extends AppCompatActivity
                         });
 
                         if (data.size() > 150) {
-                            agent.setMoreState(MoreState.TheEnd);
+                            agent.setMoreState(MoreState.Error);
                         }
                     }
                 }, 2000);

@@ -1,4 +1,4 @@
-package com.stay4cold.okrecyclerview;
+package com.stay4cold.okrecyclerview.delegate;
 
 import android.view.View;
 import android.view.ViewGroup;
