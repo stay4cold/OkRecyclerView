@@ -31,8 +31,8 @@ ext {
     bintrayName = 'ok-recyclerview'
 
     publishedGroupId = 'com.github.stay4cold'
-    libraryName = 'OkRecyclerView'
-    artifact = 'ok-recyclerview'
+    libraryName = 'OkRecyclerview'
+    artifact = 'okrecyclerview'
 
     libraryDescription = 'A library for RecyclerView'
 
