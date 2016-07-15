@@ -23,4 +23,33 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:24.0.0'
     compile 'com.android.support:recyclerview-v7:24.0.0'
+    compile 'com.android.support:support-annotations:24.0.0'
 }
+
+ext {
+    bintrayRepo = 'maven'
+    bintrayName = 'ok-recyclerview'
+
+    publishedGroupId = 'com.github.stay4cold'
+    libraryName = 'OkRecyclerView'
+    artifact = 'ok-recyclerview'
+
+    libraryDescription = 'A library for RecyclerView'
+
+    siteUrl = 'https://github.com/stay4cold/OkRecyclerView'
+    gitUrl = 'https://github.com/stay4cold/OkRecyclerView.git'
+
+    libraryVersion = '1.0.1'
+
+    developerId = 'stay4cold'
+    developerName = 'wangchenghao'
+    developerEmail = 'wangchenghao123@126.com'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}
+
+apply from: 'https://raw.githubusercontent.com/stay4cold/AndroidNotes/master/bintray.gradle'
+apply from: 'https://raw.githubusercontent.com/stay4cold/AndroidNotes/master/install.gradle'
+

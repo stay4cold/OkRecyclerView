@@ -69,13 +69,13 @@ public class DefaultFooterDelegate implements FooterDelegate {
 
     /**
      * 获取每种state中的View
-     * <p/>
+     *
      * 注意：如果需要添加自定义的view，请先set自定义的View，然后才可调用
      * 此方法进行获取view，否则容易造成NullPointerException或者获取的是
      * 默认的view
      *
      * @param state
-     * @return
+     * @return 根据state返回相应的view
      */
     @Override
     public View getMoreStateView(MoreState state) {
