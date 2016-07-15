@@ -114,7 +114,9 @@ public class OkRecyclerView {
         void onLoadMore();
     }
 
-
+    /**
+     * todo 后期添加一些状态的自动更新，比如自动显示“Empty视图”等
+     */
     public static class SDataObserver extends RecyclerView.AdapterDataObserver {
 
         private AdapterAgent agent;
