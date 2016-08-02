@@ -26,7 +26,7 @@ public class DefaultLoadingDelegate implements LoadingDelegate {
     private ViewReplaceHelper mHelper;
     private Context mContext;
     private View mTargetView;
-    private LoadingState mLoadingState;
+    private LoadingState mLoadingState = LoadingState.Normal;
 
     public DefaultLoadingDelegate(View targetView) {
         mTargetView = targetView;

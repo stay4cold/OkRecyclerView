@@ -2,6 +2,7 @@ package com.stay4cold.okrecyclerview;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 import com.stay4cold.okrecyclerview.delegate.DefaultFooterDelegate;
 import com.stay4cold.okrecyclerview.delegate.DefaultLoadingDelegate;
@@ -58,7 +59,11 @@ public class OkRecyclerView {
 
     public LoadingDelegate getLoadDelegate() {
         if (mLoadDelegate == null) {
-            mLoadDelegate = new DefaultLoadingDelegate(mOriginalRv);
+            if (mOriginalRv.getParent() != null) {
+                mLoadDelegate = new DefaultLoadingDelegate((View) mOriginalRv.getParent());
+            } else {
+                mLoadDelegate = new DefaultLoadingDelegate(mOriginalRv);
+            }
         }
 
         return mLoadDelegate;
