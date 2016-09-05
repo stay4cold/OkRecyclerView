@@ -1,10 +1,8 @@
 package com.stay4cold.okrecyclerview.delegate;
 
-import android.content.Context;
 import android.support.annotation.LayoutRes;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 
 import com.stay4cold.okrecyclerview.R;
 import com.stay4cold.okrecyclerview.helper.ViewReplaceHelper;
@@ -16,114 +14,74 @@ import com.stay4cold.okrecyclerview.state.LoadingState;
  * Date:    16/7/13
  * Description:
  */
-public class DefaultLoadingDelegate implements LoadingDelegate {
+public class DefaultLoadingDelegate implements LoaderDelegate {
 
     private static final String TAG = DefaultLoadingDelegate.class.getSimpleName();
 
-    private ViewGroup mEmptyView;
-    private ViewGroup mLoadingView;
-    private ViewGroup mErrorView;
+    @LayoutRes
+    private int mEmptyViewId;
+
+    @LayoutRes
+    private int mLoadingViewId;
+
+    @LayoutRes
+    private int mErrorViewId;
+
     private ViewReplaceHelper mHelper;
-    private Context mContext;
-    private View mTargetView;
+
     private LoadingState mLoadingState = LoadingState.Normal;
 
-    public DefaultLoadingDelegate(View targetView) {
-        mTargetView = targetView;
-        mContext = targetView.getContext();
+    private OnClickListener mErrorListener;
 
+    private OnClickListener mEmptyListener;
+
+    public DefaultLoadingDelegate(View targetView) {
         mHelper = new ViewReplaceHelper(targetView);
 
-        mEmptyView = (ViewGroup) LayoutInflater.from(mContext)
-                .inflate(R.layout.sre_empty_container, null);
-        mLoadingView = (ViewGroup) LayoutInflater.from(mContext)
-                .inflate(R.layout.sre_loading_container, null);
-        mErrorView = (ViewGroup) LayoutInflater.from(mContext)
-                .inflate(R.layout.sre_error_container, null);
+        mEmptyViewId = R.layout.sre_empty_container;
+        mLoadingViewId = R.layout.sre_loading_container;
+        mErrorViewId = R.layout.sre_error_container;
     }
 
-    public void setLoadingView(LoadingState state, View view) {
+    @Override
+    public void setLoaderView(LoadingState state, @LayoutRes int viewId) {
         switch (state) {
             case Normal:
                 break;
             case Empty:
-                setEmptyView(view);
+                mEmptyViewId = viewId;
                 break;
             case Error:
-                setErrorView(view);
+                mErrorViewId = viewId;
                 break;
             case Loading:
-                setProgressView(view);
+                mLoadingViewId = viewId;
                 break;
             default:
                 break;
         }
     }
 
-    public void setLoadingView(LoadingState state, @LayoutRes int viewId) {
+    @Override
+    public void addLoaderListener(LoadingState state, OnClickListener listener) {
         switch (state) {
             case Normal:
                 break;
             case Empty:
-                setEmptyView(viewId);
+                mEmptyListener = listener;
                 break;
             case Error:
-                setErrorView(viewId);
+                mErrorListener = listener;
                 break;
             case Loading:
-                setProgressView(viewId);
                 break;
             default:
                 break;
         }
     }
 
-    public View getLoadingView(LoadingState state) {
-        switch (state) {
-            case Normal:
-                return mTargetView;
-            case Empty:
-                return mEmptyView.getChildAt(0);
-            case Error:
-                return mErrorView.getChildAt(0);
-            case Loading:
-                return mLoadingView.getChildAt(0);
-            default:
-                throw new IllegalArgumentException(TAG + " Loading State is illegal");
-        }
-    }
-
-    public void setEmptyView(View emptyView) {
-        mEmptyView.removeAllViews();
-        mEmptyView.addView(emptyView);
-    }
-
-    public void setEmptyView(@LayoutRes int emptyViewId) {
-        mEmptyView.removeAllViews();
-        LayoutInflater.from(mContext).inflate(emptyViewId, mEmptyView);
-    }
-
-    public void setProgressView(View progressView) {
-        mLoadingView.removeAllViews();
-        mLoadingView.addView(progressView);
-    }
-
-    public void setProgressView(@LayoutRes int progressViewId) {
-        mLoadingView.removeAllViews();
-        LayoutInflater.from(mContext).inflate(progressViewId, mLoadingView);
-    }
-
-    public void setErrorView(View errorView) {
-        mErrorView.removeAllViews();
-        mErrorView.addView(errorView);
-    }
-
-    public void setErrorView(@LayoutRes int errorViewId) {
-        mErrorView.removeAllViews();
-        LayoutInflater.from(mContext).inflate(errorViewId, mErrorView);
-    }
-
-    public void setLoadingState(LoadingState state) {
+    @Override
+    public void setLoaderState(LoadingState state) {
         if (mLoadingState == state) {
             return;
         }
@@ -134,20 +92,21 @@ public class DefaultLoadingDelegate implements LoadingDelegate {
                 mHelper.restore();
                 break;
             case Loading:
-                mHelper.replaceView(mLoadingView);
+                mHelper.showLayout(mLoadingViewId, null);
                 break;
             case Error:
-                mHelper.replaceView(mErrorView);
+                mHelper.showLayout(mErrorViewId, mErrorListener);
                 break;
             case Empty:
-                mHelper.replaceView(mEmptyView);
+                mHelper.showLayout(mEmptyViewId, mEmptyListener);
                 break;
             default:
-                throw new IllegalArgumentException(TAG + " setLoadingState is illegal and state is -> " + state);
+                throw new IllegalArgumentException(TAG + " setLoaderState is illegal and state is -> " + state);
         }
     }
 
-    public LoadingState getLoadingState() {
+    @Override
+    public LoadingState getLoaderState() {
         return mLoadingState;
     }
 }

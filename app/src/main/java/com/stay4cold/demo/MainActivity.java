@@ -18,10 +18,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import com.stay4cold.okrecyclerview.OkRecyclerView;
-import com.stay4cold.okrecyclerview.delegate.HeaderDelegate;
-import com.stay4cold.okrecyclerview.delegate.HolderDelegate;
-import com.stay4cold.okrecyclerview.state.LoadingState;
-import com.stay4cold.okrecyclerview.state.MoreState;
+import com.stay4cold.okrecyclerview.holder.HeaderView;
+import com.stay4cold.okrecyclerview.state.FooterState;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
@@ -53,7 +51,7 @@ public class MainActivity extends AppCompatActivity
 
         agent = new OkRecyclerView(mRv);
 
-        agent.addHeaderDelegate(new HeaderDelegate() {
+        agent.addHeader(new HeaderView() {
             @Override
             public View onCreateView(ViewGroup parent) {
                 return LayoutInflater.from(parent.getContext()).inflate(R.layout.example1, null);
@@ -76,28 +74,19 @@ public class MainActivity extends AppCompatActivity
                             data.add("Demo" + data.size());
                             adapter.notifyDataSetChanged();
                         }
-                        agent.setMoreState(MoreState.Normal);
+                        agent.setFooterState(FooterState.Normal);
 
-                        agent.getFooterDelegate()
-                            .getMoreStateView(MoreState.Error)
-                            .setOnClickListener(new View.OnClickListener() {
+                        agent.getFooter()
+                            .setOnStateListener(FooterState.Error, new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    agent.setMoreState(MoreState.Loading);
+                                    agent.setFooterState(FooterState.Loading);
                                 }
                             });
 
                         if (data.size() > 170) {
-                            agent.setLoadState(LoadingState.Empty);
+                            agent.setFooterState(FooterState.Error);
                         }
-
-                        agent.getLoadDelegate().getLoadingView(LoadingState.Empty).setOnClickListener(
-                            new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    agent.setLoadState(LoadingState.Normal);
-                                }
-                            });
                     }
                 }, 2000);
             }

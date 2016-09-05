@@ -3,14 +3,12 @@ package com.stay4cold.okrecyclerview;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import com.stay4cold.okrecyclerview.delegate.DefaultFooterDelegate;
+import com.stay4cold.okrecyclerview.delegate.DefaultFooterView;
 import com.stay4cold.okrecyclerview.delegate.DefaultLoadingDelegate;
-import com.stay4cold.okrecyclerview.delegate.FooterDelegate;
-import com.stay4cold.okrecyclerview.delegate.HeaderDelegate;
-import com.stay4cold.okrecyclerview.delegate.HolderDelegate;
-import com.stay4cold.okrecyclerview.delegate.LoadingDelegate;
-import com.stay4cold.okrecyclerview.state.LoadingState;
-import com.stay4cold.okrecyclerview.state.MoreState;
+import com.stay4cold.okrecyclerview.holder.FooterView;
+import com.stay4cold.okrecyclerview.holder.HeaderView;
+import com.stay4cold.okrecyclerview.delegate.LoaderDelegate;
+import com.stay4cold.okrecyclerview.state.FooterState;
 
 /**
  * Author:  wangchenghao
@@ -30,9 +28,9 @@ public class OkRecyclerView {
 
     private AdapterAgent mAdapterAgent;
 
-    private LoadingDelegate mLoadDelegate;
+    private LoaderDelegate mLoadDelegate;
 
-    private FooterDelegate mFooterDelegate;
+    private FooterView mFooterDelegate;
 
     private View mLoadTargetView;
 
@@ -52,27 +50,23 @@ public class OkRecyclerView {
 
         mOriginalRv.setAdapter(mAdapterAgent);
 
-        mAdapterAgent.addFooter(getFooterDelegate());
+        mAdapterAgent.addFooter(getFooter());
     }
 
-    public void setLoadDelegate(LoadingDelegate delegate) {
+    public AdapterAgent getAdapterAgent() {
+        return mAdapterAgent;
+    }
+
+    public void setLoader(LoaderDelegate delegate) {
         mLoadDelegate = delegate;
     }
 
-    public LoadingDelegate getLoadDelegate() {
+    public LoaderDelegate getLoader() {
         if (mLoadDelegate == null) {
             mLoadDelegate = new DefaultLoadingDelegate(getLoadTargetView());
         }
 
         return mLoadDelegate;
-    }
-
-    public void setLoadState(LoadingState state) {
-        getLoadDelegate().setLoadingState(state);
-    }
-
-    public LoadingState getLoadState() {
-        return getLoadDelegate().getLoadingState();
     }
 
     /**
@@ -98,30 +92,30 @@ public class OkRecyclerView {
      * 添加一个Header，可以添加多个Header
      * @param header
      */
-    public void addHeaderDelegate(HeaderDelegate header) {
+    public void addHeader(HeaderView header) {
         if (header != null) {
             mAdapterAgent.addHeader(header);
         }
     }
 
-    public void setFooterDelegate(FooterDelegate footerDelegate) {
+    public void setFooter(FooterView footerDelegate) {
         mFooterDelegate = footerDelegate;
     }
 
-    public FooterDelegate getFooterDelegate() {
+    public FooterView getFooter() {
         if (mFooterDelegate == null) {
-            mFooterDelegate = new DefaultFooterDelegate(mContext);
+            mFooterDelegate = new DefaultFooterView(mContext);
         }
 
         return mFooterDelegate;
     }
 
-    public MoreState getMoreState() {
-        return getFooterDelegate().getMoreState();
+    public void setFooterState(FooterState state) {
+        getFooter().setState(state);
     }
 
-    public void setMoreState(MoreState state) {
-        getFooterDelegate().setMoreState(state);
+    public FooterState getFooterState() {
+        return getFooter().getState();
     }
 
     public void setOnLoadMoreListener(OnLoadMoreListener listener) {
@@ -129,11 +123,7 @@ public class OkRecyclerView {
             return;
         }
 
-        getFooterDelegate().setOnLoadMoreListener(listener);
-    }
-
-    public AdapterAgent getAdapterAgent() {
-        return mAdapterAgent;
+        getFooter().setOnLoadMoreListener(listener);
     }
 
     public interface OnLoadMoreListener {

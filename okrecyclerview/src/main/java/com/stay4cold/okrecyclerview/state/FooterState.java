@@ -7,7 +7,7 @@ package com.stay4cold.okrecyclerview.state;
  * Description:
  * 标示底部"加载更多"等的状态
  */
-public enum MoreState {
+public enum FooterState {
     //正常状态(即无状态),RecyclerView还未滑动到需要加载的位置
     Normal,
 

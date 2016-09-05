@@ -6,9 +6,9 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.stay4cold.okrecyclerview.delegate.FooterDelegate;
-import com.stay4cold.okrecyclerview.delegate.HeaderDelegate;
-import com.stay4cold.okrecyclerview.delegate.HolderDelegate;
+import com.stay4cold.okrecyclerview.holder.FooterView;
+import com.stay4cold.okrecyclerview.holder.HeaderView;
+import com.stay4cold.okrecyclerview.holder.IBaseHolder;
 
 import java.util.ArrayList;
 
@@ -23,8 +23,8 @@ public class AdapterAgent extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private static final String TAG = AdapterAgent.class.getSimpleName();
 
-    private ArrayList<HeaderDelegate> mHeaders = new ArrayList<>();
-    private ArrayList<FooterDelegate> mFooters = new ArrayList<>();
+    private ArrayList<HeaderView> mHeaders = new ArrayList<>();
+    private ArrayList<FooterView> mFooters = new ArrayList<>();
 
     //原始的Recyclerview
     private RecyclerView mOriginalRv;
@@ -105,7 +105,7 @@ public class AdapterAgent extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     private View getHeaderByType(ViewGroup parent, int viewType) {
-        for (HeaderDelegate header : mHeaders) {
+        for (HeaderView header : mHeaders) {
             if (header.hashCode() == viewType) {
                 return convertLayoutParams(header.onCreateView(parent));
             }
@@ -114,7 +114,7 @@ public class AdapterAgent extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     private View getFooterByType(ViewGroup parent, int viewType) {
-        for (FooterDelegate footer : mFooters) {
+        for (FooterView footer : mFooters) {
             if (footer.hashCode() == viewType) {
                 return convertLayoutParams(footer.onCreateView(parent));
             }
@@ -149,7 +149,7 @@ public class AdapterAgent extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         return view;
     }
 
-    public void addHeader(HeaderDelegate header) {
+    public void addHeader(HeaderView header) {
         if (header == null) {
             throw new IllegalArgumentException(TAG + " header can't be null");
         }
@@ -157,7 +157,7 @@ public class AdapterAgent extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         notifyItemInserted(mHeaders.size() - 1);
     }
 
-    public void addFooter(FooterDelegate footer) {
+    public void addFooter(FooterView footer) {
         if (footer == null) {
             throw new IllegalArgumentException(TAG + " footer can't be null");
         }
@@ -205,11 +205,11 @@ public class AdapterAgent extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         return mFooters.size();
     }
 
-    public HolderDelegate getHeader(int index) {
+    public IBaseHolder getHeader(int index) {
         return mHeaders.get(index);
     }
 
-    public FooterDelegate getFooter(int index) {
+    public FooterView getFooter(int index) {
         return mFooters.get(index);
     }
 

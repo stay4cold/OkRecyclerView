@@ -1,4 +1,4 @@
-package com.stay4cold.okrecyclerview.delegate;
+package com.stay4cold.okrecyclerview.holder;
 
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +9,7 @@ import android.view.ViewGroup;
  * Date:    16/7/13
  * Description:
  */
-public interface HolderDelegate {
+public interface IBaseHolder {
     View onCreateView(ViewGroup parent);
 
     void onBindView(View view);
