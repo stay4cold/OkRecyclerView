@@ -38,7 +38,7 @@ ext {
     siteUrl = 'https://github.com/stay4cold/OkRecyclerView'
     gitUrl = 'https://github.com/stay4cold/OkRecyclerView.git'
 
-    libraryVersion = '1.0.2'
+    libraryVersion = '1.0.3'
 
     developerId = 'stay4cold'
     developerName = 'wangchenghao'
