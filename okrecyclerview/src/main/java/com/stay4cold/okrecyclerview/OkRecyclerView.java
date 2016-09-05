@@ -4,10 +4,10 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import com.stay4cold.okrecyclerview.delegate.DefaultFooterView;
-import com.stay4cold.okrecyclerview.delegate.DefaultLoadingDelegate;
+import com.stay4cold.okrecyclerview.delegate.DefaultLoaderView;
 import com.stay4cold.okrecyclerview.holder.FooterView;
 import com.stay4cold.okrecyclerview.holder.HeaderView;
-import com.stay4cold.okrecyclerview.delegate.LoaderDelegate;
+import com.stay4cold.okrecyclerview.holder.LoaderView;
 import com.stay4cold.okrecyclerview.state.FooterState;
 
 /**
@@ -28,7 +28,7 @@ public class OkRecyclerView {
 
     private AdapterAgent mAdapterAgent;
 
-    private LoaderDelegate mLoadDelegate;
+    private LoaderView mLoadDelegate;
 
     private FooterView mFooterDelegate;
 
@@ -57,13 +57,13 @@ public class OkRecyclerView {
         return mAdapterAgent;
     }
 
-    public void setLoader(LoaderDelegate delegate) {
+    public void setLoader(LoaderView delegate) {
         mLoadDelegate = delegate;
     }
 
-    public LoaderDelegate getLoader() {
+    public LoaderView getLoader() {
         if (mLoadDelegate == null) {
-            mLoadDelegate = new DefaultLoadingDelegate(getLoadTargetView());
+            mLoadDelegate = new DefaultLoaderView(getLoadTargetView());
         }
 
         return mLoadDelegate;

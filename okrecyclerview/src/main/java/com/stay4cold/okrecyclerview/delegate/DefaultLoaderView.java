@@ -6,6 +6,7 @@ import android.view.View.OnClickListener;
 
 import com.stay4cold.okrecyclerview.R;
 import com.stay4cold.okrecyclerview.helper.ViewReplaceHelper;
+import com.stay4cold.okrecyclerview.holder.LoaderView;
 import com.stay4cold.okrecyclerview.state.LoadingState;
 
 /**
@@ -14,9 +15,9 @@ import com.stay4cold.okrecyclerview.state.LoadingState;
  * Date:    16/7/13
  * Description:
  */
-public class DefaultLoadingDelegate implements LoaderDelegate {
+public class DefaultLoaderView implements LoaderView {
 
-    private static final String TAG = DefaultLoadingDelegate.class.getSimpleName();
+    private static final String TAG = DefaultLoaderView.class.getSimpleName();
 
     @LayoutRes
     private int mEmptyViewId;
@@ -35,7 +36,7 @@ public class DefaultLoadingDelegate implements LoaderDelegate {
 
     private OnClickListener mEmptyListener;
 
-    public DefaultLoadingDelegate(View targetView) {
+    public DefaultLoaderView(View targetView) {
         mHelper = new ViewReplaceHelper(targetView);
 
         mEmptyViewId = R.layout.sre_empty_container;
@@ -44,26 +45,7 @@ public class DefaultLoadingDelegate implements LoaderDelegate {
     }
 
     @Override
-    public void setLoaderView(LoadingState state, @LayoutRes int viewId) {
-        switch (state) {
-            case Normal:
-                break;
-            case Empty:
-                mEmptyViewId = viewId;
-                break;
-            case Error:
-                mErrorViewId = viewId;
-                break;
-            case Loading:
-                mLoadingViewId = viewId;
-                break;
-            default:
-                break;
-        }
-    }
-
-    @Override
-    public void addLoaderListener(LoadingState state, OnClickListener listener) {
+    public void setOnLoaderListener(LoadingState state, OnClickListener listener) {
         switch (state) {
             case Normal:
                 break;
@@ -81,7 +63,7 @@ public class DefaultLoadingDelegate implements LoaderDelegate {
     }
 
     @Override
-    public void setLoaderState(LoadingState state) {
+    public void setState(LoadingState state) {
         if (mLoadingState == state) {
             return;
         }
@@ -101,12 +83,12 @@ public class DefaultLoadingDelegate implements LoaderDelegate {
                 mHelper.showLayout(mEmptyViewId, mEmptyListener);
                 break;
             default:
-                throw new IllegalArgumentException(TAG + " setLoaderState is illegal and state is -> " + state);
+                throw new IllegalArgumentException(TAG + " setState is illegal and state is -> " + state);
         }
     }
 
     @Override
-    public LoadingState getLoaderState() {
+    public LoadingState getState() {
         return mLoadingState;
     }
 }

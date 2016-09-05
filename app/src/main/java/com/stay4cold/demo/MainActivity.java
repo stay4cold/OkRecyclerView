@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.stay4cold.okrecyclerview.OkRecyclerView;
 import com.stay4cold.okrecyclerview.holder.HeaderView;
 import com.stay4cold.okrecyclerview.state.FooterState;
+import com.stay4cold.okrecyclerview.state.LoadingState;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
@@ -84,6 +85,9 @@ public class MainActivity extends AppCompatActivity
                                 }
                             });
 
+                        if (data.size() > 230) {
+                            agent.getLoader().setState(LoadingState.Empty);
+                        } else
                         if (data.size() > 170) {
                             agent.setFooterState(FooterState.Error);
                         }
@@ -93,6 +97,13 @@ public class MainActivity extends AppCompatActivity
         });
 
         agent.setLoadTargetView((View) mRv.getParent());
+
+        agent.getLoader().setOnLoaderListener(LoadingState.Empty, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                agent.getLoader().setState(LoadingState.Error);
+            }
+        });
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
