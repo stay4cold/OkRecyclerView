@@ -8,7 +8,7 @@ package com.stay4cold.okrecyclerview.state;
  * 标示底部"加载更多"等的状态
  */
 public enum MoreState {
-    //正常状态(即无状态),List还未滑动到需要加载的位置
+    //正常状态(即无状态),RecyclerView还未滑动到需要加载的位置
     Normal,
 
     //加载完成，没有更多数据

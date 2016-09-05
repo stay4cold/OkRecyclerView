@@ -3,11 +3,11 @@ package com.stay4cold.okrecyclerview;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-
 import com.stay4cold.okrecyclerview.delegate.DefaultFooterDelegate;
 import com.stay4cold.okrecyclerview.delegate.DefaultLoadingDelegate;
 import com.stay4cold.okrecyclerview.delegate.FooterDelegate;
 import com.stay4cold.okrecyclerview.delegate.HeaderDelegate;
+import com.stay4cold.okrecyclerview.delegate.HolderDelegate;
 import com.stay4cold.okrecyclerview.delegate.LoadingDelegate;
 import com.stay4cold.okrecyclerview.state.LoadingState;
 import com.stay4cold.okrecyclerview.state.MoreState;
@@ -34,6 +34,8 @@ public class OkRecyclerView {
 
     private FooterDelegate mFooterDelegate;
 
+    private View mLoadTargetView;
+
     public OkRecyclerView(RecyclerView recyclerView) {
         if (recyclerView == null) {
             throw new IllegalArgumentException(TAG + " recyclerView can't be null");
@@ -59,11 +61,7 @@ public class OkRecyclerView {
 
     public LoadingDelegate getLoadDelegate() {
         if (mLoadDelegate == null) {
-            if (mOriginalRv.getParent() != null) {
-                mLoadDelegate = new DefaultLoadingDelegate((View) mOriginalRv.getParent());
-            } else {
-                mLoadDelegate = new DefaultLoadingDelegate(mOriginalRv);
-            }
+            mLoadDelegate = new DefaultLoadingDelegate(getLoadTargetView());
         }
 
         return mLoadDelegate;
@@ -77,7 +75,30 @@ public class OkRecyclerView {
         return getLoadDelegate().getLoadingState();
     }
 
-    public void setHeaderDelegate(HeaderDelegate header) {
+    /**
+     * 设置loading的target view
+     * @param view
+     */
+    public void setLoadTargetView(View view) {
+        mLoadTargetView = view;
+    }
+
+    /**
+     * 获取loading的target view，如果没有设置则返回原始的RecyclerView
+     * @return
+     */
+    public View getLoadTargetView() {
+        if (mLoadTargetView == null) {
+            mLoadTargetView = mOriginalRv;
+        }
+        return mLoadTargetView;
+    }
+
+    /**
+     * 添加一个Header，可以添加多个Header
+     * @param header
+     */
+    public void addHeaderDelegate(HeaderDelegate header) {
         if (header != null) {
             mAdapterAgent.addHeader(header);
         }

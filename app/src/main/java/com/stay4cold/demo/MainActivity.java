@@ -17,15 +17,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import com.stay4cold.okrecyclerview.OkRecyclerView;
 import com.stay4cold.okrecyclerview.delegate.HeaderDelegate;
+import com.stay4cold.okrecyclerview.delegate.HolderDelegate;
+import com.stay4cold.okrecyclerview.state.LoadingState;
 import com.stay4cold.okrecyclerview.state.MoreState;
-
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+    implements NavigationView.OnNavigationItemSelectedListener {
 
     private RecyclerView mRv;
 
@@ -42,10 +42,10 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        for (int i = 0; i < 10;i++) {
-            data.add("Demo"+i);
+        for (int i = 0; i < 10; i++) {
+            data.add("Demo" + i);
         }
-        mRv = (RecyclerView)findViewById(R.id.rv);
+        mRv = (RecyclerView) findViewById(R.id.rv);
 
         mRv.setLayoutManager(new GridLayoutManager(this, 2));
 
@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity
 
         agent = new OkRecyclerView(mRv);
 
-        agent.setHeaderDelegate(new HeaderDelegate() {
+        agent.addHeaderDelegate(new HeaderDelegate() {
             @Override
             public View onCreateView(ViewGroup parent) {
                 return LayoutInflater.from(parent.getContext()).inflate(R.layout.example1, null);
@@ -72,41 +72,53 @@ public class MainActivity extends AppCompatActivity
                 mRv.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        for (int i = 0; i < 50;i++) {
-                            data.add("Demo"+data.size());
+                        for (int i = 0; i < 50; i++) {
+                            data.add("Demo" + data.size());
                             adapter.notifyDataSetChanged();
                         }
                         agent.setMoreState(MoreState.Normal);
 
-                        agent.getFooterDelegate().getMoreStateView(MoreState.Error).setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                agent.setMoreState(MoreState.Loading);
-                            }
-                        });
+                        agent.getFooterDelegate()
+                            .getMoreStateView(MoreState.Error)
+                            .setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    agent.setMoreState(MoreState.Loading);
+                                }
+                            });
 
-                        if (data.size() > 150) {
-                            agent.setMoreState(MoreState.Error);
+                        if (data.size() > 170) {
+                            agent.setLoadState(LoadingState.Empty);
                         }
+
+                        agent.getLoadDelegate().getLoadingView(LoadingState.Empty).setOnClickListener(
+                            new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    agent.setLoadState(LoadingState.Normal);
+                                }
+                            });
                     }
                 }, 2000);
             }
         });
 
-
+        agent.setLoadTargetView((View) mRv.getParent());
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                    .setAction("Action", null)
+                    .show();
             }
         });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        ActionBarDrawerToggle toggle =
+            new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
@@ -173,10 +185,10 @@ public class MainActivity extends AppCompatActivity
 
     class Ad extends RecyclerView.Adapter<Ad.Holder> {
 
-
         @Override
         public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new Holder(LayoutInflater.from(MainActivity.this).inflate(R.layout.example, parent, false));
+            return new Holder(
+                LayoutInflater.from(MainActivity.this).inflate(R.layout.example, parent, false));
         }
 
         @Override
@@ -192,6 +204,7 @@ public class MainActivity extends AppCompatActivity
 
         class Holder extends RecyclerView.ViewHolder {
             public TextView tv;
+
             public Holder(View view) {
                 super(view);
                 tv = (TextView) view.findViewById(R.id.tv);

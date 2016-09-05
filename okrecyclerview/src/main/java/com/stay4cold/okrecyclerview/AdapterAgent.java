@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import com.stay4cold.okrecyclerview.delegate.FooterDelegate;
 import com.stay4cold.okrecyclerview.delegate.HeaderDelegate;
+import com.stay4cold.okrecyclerview.delegate.HolderDelegate;
 
 import java.util.ArrayList;
 
@@ -204,7 +205,7 @@ public class AdapterAgent extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         return mFooters.size();
     }
 
-    public HeaderDelegate getHeader(int index) {
+    public HolderDelegate getHeader(int index) {
         return mHeaders.get(index);
     }
 

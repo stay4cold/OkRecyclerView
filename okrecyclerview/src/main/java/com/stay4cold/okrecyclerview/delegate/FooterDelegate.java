@@ -12,7 +12,7 @@ import com.stay4cold.okrecyclerview.state.MoreState;
  * Date:    16/7/13
  * Description:
  */
-public interface FooterDelegate extends HeaderDelegate {
+public interface FooterDelegate extends HolderDelegate {
 
     void setMoreContainer(ViewGroup viewGroup);
 
