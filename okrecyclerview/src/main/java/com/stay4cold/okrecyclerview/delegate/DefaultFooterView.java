@@ -1,6 +1,5 @@
 package com.stay4cold.okrecyclerview.delegate;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -8,6 +7,7 @@ import android.view.ViewGroup;
 import com.stay4cold.okrecyclerview.OkRecyclerView.OnLoadMoreListener;
 import com.stay4cold.okrecyclerview.R;
 import com.stay4cold.okrecyclerview.holder.FooterView;
+import com.stay4cold.okrecyclerview.holder.OnFooterListener;
 import com.stay4cold.okrecyclerview.state.FooterState;
 
 /**
@@ -26,11 +26,19 @@ public class DefaultFooterView implements FooterView {
 
     private OnLoadMoreListener mListener;
 
-    private OnClickListener mEndListener;
+    private OnClickListener mFailListener;
 
-    private OnClickListener mErrorListener;
+    private OnFooterListener mFooterListener;
 
-    public DefaultFooterView(Context context) {
+    public DefaultFooterView() {
+        mFailListener = new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mFooterListener != null) {
+                    mFooterListener.onFooterClickListener(mState);
+                }
+            }
+        };
     }
 
     @Override
@@ -57,11 +65,11 @@ public class DefaultFooterView implements FooterView {
                 break;
             case Error:
                 showStateView(mErrorView);
-                mErrorView.setOnClickListener(mErrorListener);
+                mErrorView.setOnClickListener(mFailListener);
                 break;
             case TheEnd:
                 showStateView(mEndView);
-                mEndView.setOnClickListener(mEndListener);
+                mEndView.setOnClickListener(mFailListener);
                 break;
             default:
                 break;
@@ -69,21 +77,8 @@ public class DefaultFooterView implements FooterView {
     }
 
     @Override
-    public void setOnStateListener(FooterState state, OnClickListener listener) {
-        switch (state) {
-            case Normal:
-                break;
-            case Loading:
-                break;
-            case Error:
-                mErrorListener = listener;
-                break;
-            case TheEnd:
-                mEndListener = listener;
-                break;
-            default:
-                break;
-        }
+    public void setOnFooterListener(OnFooterListener listener) {
+        this.mFooterListener = listener;
     }
 
     @Override

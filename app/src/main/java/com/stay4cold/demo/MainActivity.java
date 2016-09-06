@@ -19,8 +19,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import com.stay4cold.okrecyclerview.OkRecyclerView;
 import com.stay4cold.okrecyclerview.holder.HeaderView;
+import com.stay4cold.okrecyclerview.holder.OnFooterListener;
+import com.stay4cold.okrecyclerview.holder.OnLoaderListener;
 import com.stay4cold.okrecyclerview.state.FooterState;
-import com.stay4cold.okrecyclerview.state.LoadingState;
+import com.stay4cold.okrecyclerview.state.LoaderState;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
@@ -50,9 +52,7 @@ public class MainActivity extends AppCompatActivity
 
         mRv.setAdapter(adapter = new Ad());
 
-        agent = new OkRecyclerView(mRv);
-
-        agent.addHeader(new HeaderView() {
+        agent = new OkRecyclerView.Builder(mRv).addHeader(new HeaderView() {
             @Override
             public View onCreateView(ViewGroup parent) {
                 return LayoutInflater.from(parent.getContext()).inflate(R.layout.example1, null);
@@ -62,48 +62,50 @@ public class MainActivity extends AppCompatActivity
             public void onBindView(View view) {
 
             }
-        });
-
-        agent.setOnLoadMoreListener(new OkRecyclerView.OnLoadMoreListener() {
-            @Override
-            public void onLoadMore() {
-
-                mRv.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        for (int i = 0; i < 50; i++) {
-                            data.add("Demo" + data.size());
-                            adapter.notifyDataSetChanged();
-                        }
-                        agent.setFooterState(FooterState.Normal);
-
-                        agent.getFooter()
-                            .setOnStateListener(FooterState.Error, new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    agent.setFooterState(FooterState.Loading);
-                                }
-                            });
-
-                        if (data.size() > 230) {
-                            agent.getLoader().setState(LoadingState.Empty);
-                        } else
-                        if (data.size() > 170) {
-                            agent.setFooterState(FooterState.Error);
-                        }
+        })
+            .setLoaderTargetView((ViewGroup) mRv.getParent())
+            .setOnFooterListener(new OnFooterListener() {
+                @Override
+                public void onFooterClickListener(FooterState state) {
+                    if (state == FooterState.Error) {
+                        agent.setLoaderState(LoaderState.Empty);
+                    } else if (state == FooterState.TheEnd) {
+                        agent.setFooterState(FooterState.Loading);
                     }
-                }, 2000);
-            }
-        });
-
-        agent.setLoadTargetView((View) mRv.getParent());
-
-        agent.getLoader().setOnLoaderListener(LoadingState.Empty, new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                agent.getLoader().setState(LoadingState.Error);
-            }
-        });
+                }
+            })
+            .setOnLoaderListener(new OnLoaderListener() {
+                @Override
+                public void onLoaderClick(LoaderState state) {
+                    if (state == LoaderState.Empty) {
+                        agent.setLoaderState(state.Error);
+                    } else if (state == LoaderState.Error) {
+                        agent.setLoaderState(LoaderState.Normal);
+                    }
+                }
+            })
+            .setOnLoadmoreListener(new OkRecyclerView.OnLoadMoreListener() {
+                @Override
+                public void onLoadMore() {
+                    mRv.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            for (int i = 0; i < 50; i++) {
+                                data.add("Demo" + data.size());
+                                adapter.notifyDataSetChanged();
+                            }
+                            if (data.size() > 250) {
+                                agent.setFooterState(FooterState.Error);
+                            } else if (data.size() > 180) {
+                                agent.setFooterState(FooterState.TheEnd);
+                            } else {
+                                agent.setFooterState(FooterState.Normal);
+                            }
+                        }
+                    }, 2000);
+                }
+            })
+            .build();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {

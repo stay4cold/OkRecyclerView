@@ -1,7 +1,5 @@
 package com.stay4cold.okrecyclerview.holder;
 
-import android.view.View.OnClickListener;
-
 import com.stay4cold.okrecyclerview.OkRecyclerView.OnLoadMoreListener;
 import com.stay4cold.okrecyclerview.state.FooterState;
 
@@ -19,5 +17,5 @@ public interface FooterView extends IBaseHolder {
 
     void setOnLoadMoreListener(OnLoadMoreListener listener);
 
-    void setOnStateListener(FooterState state, OnClickListener listener);
+    void setOnFooterListener(OnFooterListener listener);
 }

@@ -7,8 +7,8 @@ android {
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 24
-        versionCode 1
-        versionName "1.0.2"
+        versionCode 4
+        versionName "1.0.4"
     }
     buildTypes {
         release {
@@ -38,7 +38,7 @@ ext {
     siteUrl = 'https://github.com/stay4cold/OkRecyclerView'
     gitUrl = 'https://github.com/stay4cold/OkRecyclerView.git'
 
-    libraryVersion = '1.0.3'
+    libraryVersion = '1.0.4'
 
     developerId = 'stay4cold'
     developerName = 'wangchenghao'

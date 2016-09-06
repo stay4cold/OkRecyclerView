@@ -7,7 +7,7 @@ package com.stay4cold.okrecyclerview.state;
  * Description:
  * 第一次进入界面或者下拉刷新时显示的状态
  */
-public enum LoadingState {
+public enum LoaderState {
     //正常状态(数据加载成功),正常显示Recyclerview
     Normal,
 

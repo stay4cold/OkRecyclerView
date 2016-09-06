@@ -1,6 +1,5 @@
 package com.stay4cold.okrecyclerview;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import com.stay4cold.okrecyclerview.delegate.DefaultFooterView;
@@ -8,7 +7,11 @@ import com.stay4cold.okrecyclerview.delegate.DefaultLoaderView;
 import com.stay4cold.okrecyclerview.holder.FooterView;
 import com.stay4cold.okrecyclerview.holder.HeaderView;
 import com.stay4cold.okrecyclerview.holder.LoaderView;
+import com.stay4cold.okrecyclerview.holder.OnFooterListener;
+import com.stay4cold.okrecyclerview.holder.OnLoaderListener;
 import com.stay4cold.okrecyclerview.state.FooterState;
+import com.stay4cold.okrecyclerview.state.LoaderState;
+import java.util.ArrayList;
 
 /**
  * Author:  wangchenghao
@@ -20,27 +23,41 @@ public class OkRecyclerView {
 
     private static final String TAG = OkRecyclerView.class.getSimpleName();
 
-    private Context mContext;
-
     private RecyclerView mOriginalRv;
 
     private RecyclerView.Adapter mOriginalAdapter;
 
     private AdapterAgent mAdapterAgent;
 
-    private LoaderView mLoadDelegate;
+    private LoaderView mLoader;
 
-    private FooterView mFooterDelegate;
+    private FooterView mFooter;
 
-    private View mLoadTargetView;
+    private View mLoaderTargetView;
 
-    public OkRecyclerView(RecyclerView recyclerView) {
-        if (recyclerView == null) {
-            throw new IllegalArgumentException(TAG + " recyclerView can't be null");
+    private OnLoaderListener mLoaderListener;
+
+    private OnLoadMoreListener mListener;
+
+    private OnFooterListener mFooterListener;
+
+    private ArrayList<HeaderView> mHeaders = new ArrayList<>();
+
+    private OkRecyclerView(Builder builder) {
+
+        this.mOriginalRv = builder.recyclerView;
+        this.mLoader = builder.loader;
+        this.mFooter = builder.footer;
+        this.mLoaderTargetView = builder.loaderTargerView;
+        this.mHeaders = builder.headerViews;
+        this.mListener = builder.listener;
+        this.mFooterListener = builder.footerListener;
+        this.mLoaderListener = builder.loaderListener;
+
+        //设置默认的TargetView
+        if (mLoaderTargetView == null) {
+            mLoaderTargetView = mOriginalRv;
         }
-        mContext = recyclerView.getContext();
-
-        this.mOriginalRv = recyclerView;
 
         mAdapterAgent = new AdapterAgent(mOriginalRv);
 
@@ -50,64 +67,48 @@ public class OkRecyclerView {
 
         mOriginalRv.setAdapter(mAdapterAgent);
 
+        //添加Header
+        for (HeaderView view : mHeaders) {
+            if (view != null) {
+                mAdapterAgent.addHeader(view);
+            }
+        }
+
+        //添加LoaderListener
+        getLoader().setOnLoaderListener(mLoaderListener);
+
+        //添加Footer
         mAdapterAgent.addFooter(getFooter());
+
+        //添加OnLoadMoreListener
+        getFooter().setOnLoadMoreListener(mListener);
+
+        //添加Footer listener
+        getFooter().setOnFooterListener(mFooterListener);
     }
 
-    public AdapterAgent getAdapterAgent() {
-        return mAdapterAgent;
-    }
-
-    public void setLoader(LoaderView delegate) {
-        mLoadDelegate = delegate;
-    }
-
-    public LoaderView getLoader() {
-        if (mLoadDelegate == null) {
-            mLoadDelegate = new DefaultLoaderView(getLoadTargetView());
+    private LoaderView getLoader() {
+        if (mLoader == null) {
+            mLoader = new DefaultLoaderView(mLoaderTargetView);
         }
 
-        return mLoadDelegate;
+        return mLoader;
     }
 
-    /**
-     * 设置loading的target view
-     * @param view
-     */
-    public void setLoadTargetView(View view) {
-        mLoadTargetView = view;
+    public void setLoaderState(LoaderState state) {
+        getLoader().setState(state);
     }
 
-    /**
-     * 获取loading的target view，如果没有设置则返回原始的RecyclerView
-     * @return
-     */
-    public View getLoadTargetView() {
-        if (mLoadTargetView == null) {
-            mLoadTargetView = mOriginalRv;
-        }
-        return mLoadTargetView;
+    public LoaderState getLoaderState() {
+        return getLoader().getState();
     }
 
-    /**
-     * 添加一个Header，可以添加多个Header
-     * @param header
-     */
-    public void addHeader(HeaderView header) {
-        if (header != null) {
-            mAdapterAgent.addHeader(header);
-        }
-    }
-
-    public void setFooter(FooterView footerDelegate) {
-        mFooterDelegate = footerDelegate;
-    }
-
-    public FooterView getFooter() {
-        if (mFooterDelegate == null) {
-            mFooterDelegate = new DefaultFooterView(mContext);
+    private FooterView getFooter() {
+        if (mFooter == null) {
+            mFooter = new DefaultFooterView();
         }
 
-        return mFooterDelegate;
+        return mFooter;
     }
 
     public void setFooterState(FooterState state) {
@@ -116,14 +117,6 @@ public class OkRecyclerView {
 
     public FooterState getFooterState() {
         return getFooter().getState();
-    }
-
-    public void setOnLoadMoreListener(OnLoadMoreListener listener) {
-        if (listener == null) {
-            return;
-        }
-
-        getFooter().setOnLoadMoreListener(listener);
     }
 
     public interface OnLoadMoreListener {
@@ -164,6 +157,67 @@ public class OkRecyclerView {
         @Override
         public void onItemRangeMoved(int fromPosition, int toPosition, int itemCount) {
             agent.notifyItemMoved(fromPosition, toPosition);
+        }
+    }
+
+    public static final class Builder {
+
+        private RecyclerView recyclerView;
+        private LoaderView loader;
+        private View loaderTargerView;
+        private ArrayList<HeaderView> headerViews = new ArrayList<>();
+        private FooterView footer;
+        private OnLoadMoreListener listener;
+        private OnFooterListener footerListener;
+        private OnLoaderListener loaderListener;
+
+        public Builder(RecyclerView recyclerView) {
+            this.recyclerView = recyclerView;
+        }
+
+        public Builder setLoader(LoaderView loader) {
+            this.loader = loader;
+            return this;
+        }
+
+        /**
+         * 设置loading的target view
+         */
+        public Builder setLoaderTargetView(View loaderTargetView) {
+            this.loaderTargerView = loaderTargetView;
+            return this;
+        }
+
+        /**
+         * 可以添加多个Header
+         */
+        public Builder addHeader(HeaderView headerView) {
+            headerViews.add(headerView);
+            return this;
+        }
+
+        public Builder setFooter(FooterView footer) {
+            this.footer = footer;
+            return this;
+        }
+
+        public Builder setOnLoadmoreListener(OnLoadMoreListener listener) {
+            this.listener = listener;
+            return this;
+        }
+
+        public Builder setOnFooterListener(OnFooterListener listener) {
+            this.footerListener = listener;
+            return this;
+        }
+
+        public Builder setOnLoaderListener(OnLoaderListener listener) {
+            this.loaderListener = listener;
+            return this;
+        }
+
+        public OkRecyclerView build() {
+            return new OkRecyclerView(this);
         }
     }
 }

@@ -1,10 +1,6 @@
 package com.stay4cold.okrecyclerview.holder;
 
-import android.support.annotation.LayoutRes;
-import android.view.View;
-
-import android.view.View.OnClickListener;
-import com.stay4cold.okrecyclerview.state.LoadingState;
+import com.stay4cold.okrecyclerview.state.LoaderState;
 
 /**
  * Author:  wangchenghao
@@ -13,9 +9,9 @@ import com.stay4cold.okrecyclerview.state.LoadingState;
  * Description:
  */
 public interface LoaderView {
-    void setOnLoaderListener(LoadingState state, OnClickListener listener);
+    void setOnLoaderListener(OnLoaderListener listener);
 
-    void setState(LoadingState state);
+    void setState(LoaderState state);
 
-    LoadingState getState();
+    LoaderState getState();
 }

@@ -5,11 +5,9 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.stay4cold.okrecyclerview.holder.FooterView;
 import com.stay4cold.okrecyclerview.holder.HeaderView;
 import com.stay4cold.okrecyclerview.holder.IBaseHolder;
-
 import java.util.ArrayList;
 
 /**
@@ -124,9 +122,6 @@ public class AdapterAgent extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     /**
      * 处理StaggeredGridLayoutManager中Header和Footer的Span，使其可以占满整个Item
-     *
-     * @param view
-     * @return
      */
     private View convertLayoutParams(View view) {
         if (view == null) {
@@ -140,7 +135,9 @@ public class AdapterAgent extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             if (view.getLayoutParams() != null) {
                 slp = new StaggeredGridLayoutManager.LayoutParams(view.getLayoutParams());
             } else {
-                slp = new StaggeredGridLayoutManager.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                slp =
+                    new StaggeredGridLayoutManager.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT);
             }
             slp.setFullSpan(true);
             view.setLayoutParams(slp);
@@ -231,9 +228,6 @@ public class AdapterAgent extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         /**
          * 返回处理后的spanSize，注意：新的adapter中position位置已经更改，所以应该为 position - mHeaders.size()
-         *
-         * @param position
-         * @return
          */
         @Override
         public int getSpanSize(int position) {
