@@ -89,6 +89,9 @@ public class DefaultFooterView implements FooterView {
         mErrorView = view.findViewById(R.id.error);
         mEndView = view.findViewById(R.id.end);
 
+        //默认隐藏所有的view，防止RV中没有数据时显示Footer
+        showStateView(null);
+
         return view;
     }
 

@@ -154,6 +154,10 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            for (int i = 0; i < 10; i++) {
+                data.add("Demo" + i);
+                adapter.notifyDataSetChanged();
+            }
             return true;
         }
 

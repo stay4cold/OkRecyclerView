@@ -66,7 +66,14 @@ public class AdapterAgent extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             return;
         }
 
-        int index = position - mHeaders.size() - mOriginalAdapter.getItemCount();
+        int realItemCount = mOriginalAdapter.getItemCount();
+
+        //数据为空
+        if (realItemCount <= 0) {
+            return;
+        }
+
+        int index = position - mHeaders.size() - realItemCount;
         if (mFooters.size() != 0 && index >= 0) {
             mFooters.get(index).onBindView(holder.itemView);
             return;
