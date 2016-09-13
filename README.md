@@ -6,5 +6,5 @@
 
 ### Gradle
     dependencies {  
-      compile 'com.github.stay4cold:okrecyclerview:1.0.2'  
+      compile 'com.github.stay4cold:okrecyclerview:1.0.4'  
     }
