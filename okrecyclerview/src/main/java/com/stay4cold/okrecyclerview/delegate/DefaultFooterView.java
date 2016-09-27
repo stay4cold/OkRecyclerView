@@ -65,11 +65,9 @@ public class DefaultFooterView implements FooterView {
                 break;
             case Error:
                 showStateView(mErrorView);
-                mErrorView.setOnClickListener(mFailListener);
                 break;
             case TheEnd:
                 showStateView(mEndView);
-                mEndView.setOnClickListener(mFailListener);
                 break;
             default:
                 break;
@@ -89,6 +87,9 @@ public class DefaultFooterView implements FooterView {
         mErrorView = view.findViewById(R.id.error);
         mEndView = view.findViewById(R.id.end);
 
+        mErrorView.setOnClickListener(mFailListener);
+        mEndView.setOnClickListener(mFailListener);
+
         //默认隐藏所有的view，防止RV中没有数据时显示Footer
         showStateView(null);
 
@@ -99,6 +100,10 @@ public class DefaultFooterView implements FooterView {
     public void onBindView(View view) {
         if (getState() == FooterState.Normal) {
             setState(FooterState.Loading);
+        } else if (getState() == FooterState.Error) {
+            showStateView(mErrorView);
+        } else if (getState() == FooterState.TheEnd) {
+            showStateView(mEndView);
         }
     }
 
@@ -110,8 +115,16 @@ public class DefaultFooterView implements FooterView {
     }
 
     private void showStateView(View view) {
-        mErrorView.setVisibility(mErrorView == view ? View.VISIBLE : View.INVISIBLE);
-        mEndView.setVisibility(mEndView == view ? View.VISIBLE : View.INVISIBLE);
-        mLoadingView.setVisibility(mLoadingView == view ? View.VISIBLE : View.INVISIBLE);
+        if (mErrorView != null) {
+            mErrorView.setVisibility(mErrorView == view ? View.VISIBLE : View.INVISIBLE);
+        }
+
+        if (mEndView != null) {
+            mEndView.setVisibility(mEndView == view ? View.VISIBLE : View.INVISIBLE);
+        }
+
+        if (mLoadingView != null) {
+            mLoadingView.setVisibility(mLoadingView == view ? View.VISIBLE : View.INVISIBLE);
+        }
     }
 }

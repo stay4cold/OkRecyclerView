@@ -43,9 +43,7 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        for (int i = 0; i < 10; i++) {
-            data.add("Demo" + i);
-        }
+
         mRv = (RecyclerView) findViewById(R.id.rv);
 
         mRv.setLayoutManager(new GridLayoutManager(this, 2));
@@ -106,6 +104,11 @@ public class MainActivity extends AppCompatActivity
                 }
             })
             .build();
+
+        for (int i = 0; i < 10; i++) {
+            data.add("Demo" + i);
+            agent.setFooterState(FooterState.TheEnd);
+        }
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
